@@ -26,7 +26,7 @@ jobs:
           echo "Package created successfully"
 
       - name: Install Sigstore Cosign
-        uses: sigstore/cosign-installer@v4
+        uses: sigstore/cosign-installer@v3
 
       - name: Sign Artifact Keylessly
         run: |
