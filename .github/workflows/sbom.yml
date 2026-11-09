@@ -1,5 +1,5 @@
 
-name: Generate SBOM Artifacts
+name: Generate and Scan SBOM
 
 on:
   push:
@@ -26,8 +26,26 @@ jobs:
           output-file: sbom.spdx.json
           upload-artifact: false
 
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@v0.15.10
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: sbom.cyclonedx.json
+          upload-artifact: false
+
+      - name: Scan SBOM for Vulnerabilities
+        uses: anchore/scan-action@v7
+        with:
+          sbom: sbom.spdx.json
+          fail-build: false
+          output-format: json
+
       - name: Upload SBOM Artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: project-sbom-reports
-          path: sbom.spdx.json
+          path: |
+            sbom.spdx.json
+            sbom.cyclonedx.json
